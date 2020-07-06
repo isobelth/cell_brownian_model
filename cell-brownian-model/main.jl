@@ -19,14 +19,14 @@ include("./updateSystem.jl")
 include("./interCellForces.jl")
 include("./initialise.jl")
 include("./createRunDirectory.jl")
-include("./outerPoints.jl")
+#include("./outerPoints.jl")
 using .InterCellForces
 using .CalculateNoise
 using .UpdateSystem
 using .OutputData
 using .Initialise
 using .CreateRunDirectory
-using .OuterPoints
+#using .OuterPoints
 
 
 # Define function for bringing together modules to run simulation
@@ -36,7 +36,7 @@ using .OuterPoints
     Ncells        = 7            # Number of cells to start with
     σ              = 0.5           # Diameter of cell/Equilibrium separation
     boxSize        = 3.0           # Dimensions of cube in which particles are initialised
-    Ncells_max     = 10        #max number of cells
+    Ncells_max     = 50        #max number of cells
 
     # Thermodynamic parameters
     μ              = 1.0           # Fluid viscosity
@@ -51,11 +51,11 @@ using .OuterPoints
     a              = sqrt(k/(2*ϵ)) # Property of morse potential derived from approximate equilibrium spring constant
 
     # Simulation parameters
-    tmax           = 10.0           # Total simulation time
+    tmax           = 50.0           # Total simulation time
     dt             = 0.0001        # Time step between iterations
     outputInterval = tmax/100.0    # Time interval for writing position data to file
 
-    lifetime = 10.0
+    lifetime = 8.0
 
     # Data arrays
     pos            = MMatrix{Ncells_max,3}(zeros(Ncells_max,3)) # xyz positions of all particles

@@ -11,8 +11,11 @@ using Random
 using Distributions
 using LinearAlgebra
 using StaticArrays
-include("./outerPoints.jl")
-using .OuterPoints
+#include("./outerPoints.jl")
+#using .OuterPoints
+using PyCall
+sp = pyimport("scipy.spatial")
+
 
 @inline function updateSystem!(pos::MMatrix,F::MMatrix,W::MMatrix,Ncells::Int64,t::Float64,dt::Float64,D::Float64,kT::Float64, age::MMatrix, lifetime::Float64, σ::Float64 )
 
@@ -20,11 +23,13 @@ using .OuterPoints
     F .= 0
     W .= 0
 
-    vertex_indices = outerPoints!(pos)
-    print("Vertex indices =", vertex_indices, "\n")
+    hull = sp.ConvexHull(reshape(filter(!iszero, pos), (Ncells,3)))
+    vertex_points = hull.vertices.+1
+
+
+    print("Vertex indices =", vertex_points, "\n")
     for ii in 1:Ncells
-        if ii in vertex_indices
-        else
+        if ii in vertex_points
             age[ii] += dt
         end
     end
