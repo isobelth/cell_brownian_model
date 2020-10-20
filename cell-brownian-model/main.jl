@@ -45,6 +45,8 @@ using .CreateRunDirectory
     # Force parameters
     ϵ              = 10.0*kT       # Potential depth
     k              = 10.0*kT       # Cell stiffness/approximate equilibrium spring constant of morse potential
+    m             = 1.0           #proportionality constant for matrix force
+
 
     # Derived parameters
     D              = kT/(6.0*π*μ*σ)# Diffusion constant
@@ -71,7 +73,7 @@ using .CreateRunDirectory
     DD = MArray{Tuple{3},Float64,1,3}(zeros(3))
 
     # Set up folder and output files for data
-    foldername = createRunDirectory(Ncells,Ncells_max, lifetime,boxSize, k,μ,kT,ϵ,σ,D,tmax,dt,outputInterval)
+    foldername = createRunDirectory(Ncells,Ncells_max, lifetime,boxSize, k,μ,kT,ϵ,σ,D,tmax,dt,outputInterval, m)
     outfile = open("output/$(foldername)/output.txt","w")
 
     # Initialise cell locations within box
@@ -86,7 +88,7 @@ using .CreateRunDirectory
         end
 
         # Calculate Morse interactions between cells
-        interCellForces!(pos,F,Ncells,ϵ,σ,DD,a, age, lifetime)
+        interCellForces!(pos,F,Ncells,ϵ,σ,DD,a, age, lifetime, m)
 
         # Adapt timestep to maximum force value
         Fmax_sq = max(sum(F.*F,dims=2)...) #Fdims from 2

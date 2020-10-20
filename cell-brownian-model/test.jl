@@ -6,6 +6,7 @@ sp = pyimport("scipy.spatial")
 using Distributions
 using Plots
 using PyPlot
+using LinearAlgebra
 
 function main_test()
     Ncells=10
@@ -14,7 +15,7 @@ function main_test()
     for ii=1:Ncells
         pos[ii,:] .= rand(Uniform(-2,2),3)
     end
-    print("pos = ", pos, "\n")
+
     lifetime::Float64 = 5.0
 
     numerator = 0
@@ -91,10 +92,39 @@ function main_test()
         end
     end
 
-    print("neighbours = ", neighbours, "\n")
-    #print(hull.simplices)
 
-    return neighbours, pos
+    unit_vecs=zeros(Ncells, 3)
+
+    for i in vertex_points
+        unit_vector = 0
+        print("i=", i, "The neighbours of i are",neighbours[i,:], "\n")
+        for j in neighbours[i,:]
+            if j != 0.0
+                j=convert(Int64, j)
+                vector2 = pos[j,:] .- pos[i,:]
+                mag_2 = sqrt(dot(vector2, vector2))
+                #mag_2 = sqrt(vector2.dot(vector2))
+                unit_vector2 = vector2/mag_2
+                unit_vector += unit_vector2
+            end
+        end
+
+        if sqrt(dot(unit_vector, unit_vector)) != 0
+            unit_vector = unit_vector / (sqrt(dot(unit_vector,unit_vector)))
+            #unit_vector = unit_vector.tolist()
+        end
+
+        unit_vecs[i,:] = unit_vector
+    end
+    print("The unit vectors are", unit_vecs, "\n")
+    print("positions are = ", pos, "\n")
+    print("neighbours = ", neighbours, "\n")
+    proportionality_constant = 1.0
+    for i in vertex_points
+        distance = pos[i,:].- CoM
+
+
+    #return neighbours, pos, unit_vecs
 
 
 end
