@@ -14,7 +14,13 @@ function createRunDirectory(Ncells,Ncells_max, lifetime,boxSize,k,μ,kT,ϵ,σ,D,
     date = Dates.format(Dates.now(), "dd-mm-yyyy")
     foldername = "$date,N-$Ncells,Nmax-$Ncells_max,tmax-$tmax,kT-$kT, m-$m"
     #foldername = (Dates.format(Dates.now(),"dd-mm-yyyy"+"N-$Ncells,tmax-$tmax,a-$a,kT-$kT")
+
+###############################
     mkdir("output/$(foldername)")
+    # ^ Might want to creat an "if the folder doesn't already exist" term here or else you might get a lot of failed runs 
+###############################
+
+
     open("output/$(foldername)/conditions.txt","w") do conditionsfile
         println(conditionsfile,"Ncells,$Ncells")
         println(conditionsfile,"Nmax,$Ncells_max")

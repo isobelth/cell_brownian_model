@@ -13,7 +13,7 @@ using StaticArrays
 using PyCall
 sp = pyimport("scipy.spatial")
 
-@inline function interCellForces!(pos,FBM,N_BM_cells,ϵ,σ,r,a,t,lifetime)
+@inline function bMForces!(pos,FBM,N_BM_cells,ϵ,σ,r,a,t,lifetime)
 #############MORSE FORCE BETWEEN BMCELLS##########
     for ii=1:N_BM_cells
         for jj=1:N_BM_cells
@@ -30,15 +30,8 @@ sp = pyimport("scipy.spatial")
             end
         end
     end
-
-
-
-
-
-    end
-
 end
 
-export bmForces!
+export bMForces!
 
 end
