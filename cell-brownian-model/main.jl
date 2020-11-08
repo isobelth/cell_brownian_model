@@ -19,6 +19,7 @@ include("./updateSystem.jl")
 include("./interCellForces.jl")
 include("./initialise.jl")
 include("./createRunDirectory.jl")
+include("./importantParameters.jl")
 #include("./outerPoints.jl")
 using .InterCellForces
 using .CalculateNoise
@@ -26,6 +27,7 @@ using .UpdateSystem
 using .OutputData
 using .Initialise
 using .CreateRunDirectory
+using .ImportantParameters
 #using .OuterPoints
 
 
@@ -36,16 +38,18 @@ using .CreateRunDirectory
     Ncells        = 7            # Number of cells to start with
     σ              = 0.5           # Diameter of cell/Equilibrium separation
     boxSize        = 3.0           # Dimensions of cube in which particles are initialised
-    Ncells_max     = 50        #max number of cells
+    Ncells_max     = 70        #max number of cells
+
+    N_BM_cells = 200
 
     # Thermodynamic parameters
     μ              = 1.0           # Fluid viscosity
-    kT             = 1.0           # Boltzmann constant*Temperature
+    kT             = 0.5           # Boltzmann constant*Temperature
 
-    # Force parameters
+    # Force parameters for cells
     ϵ              = 10.0*kT       # Potential depth
     k              = 10.0*kT       # Cell stiffness/approximate equilibrium spring constant of morse potential
-    m             = 1.0           #proportionality constant for matrix force
+    m             = 5.0           #proportionality constant for matrix force
 
 
     # Derived parameters
@@ -64,7 +68,8 @@ using .CreateRunDirectory
     F              = MMatrix{Ncells_max,3}(zeros(Ncells_max,3)) # xyz dimensions of all forces applied to particles
     W              = MMatrix{Ncells_max,3}(zeros(Ncells_max,3)) # xyz values of stochastic Wiener process for all particles
     age            = MMatrix{Ncells_max,1}(zeros(Ncells_max,1))
-
+    BM_pos         = MMatrix{N_BM_cells,3}(zeros(N_BM_cells,3))
+    FBM            = MMatrix{N_BM_cells,3}(zeros(N_BM_cells,3))
     # Allocate variables needed for calculations
     t = 0.0
     AA = zeros(3)
@@ -77,7 +82,7 @@ using .CreateRunDirectory
     outfile = open("output/$(foldername)/output.txt","w")
 
     # Initialise cell locations within box
-    initialise(pos,Ncells,boxSize, age, lifetime)
+    initialise(pos,Ncells,boxSize, age, lifetime, N_BM_cells, BM_pos)
 
     # Iterate over system time
     while t<tmax
@@ -87,8 +92,20 @@ using .CreateRunDirectory
             outputData(pos,outfile,t,tmax, age)
         end
 
+        #calculate CoM, vertices and neighbours list
+
         # Calculate Morse interactions between cells
-        interCellForces!(pos,F,Ncells,ϵ,σ,DD,a, age, lifetime, m)
+        unit_vecs=zeros(Ncells, 3)
+        hull = sp.ConvexHull(reshape(filter(!iszero, pos), (Ncells,3)))
+        vertex_points = hull.vertices.+1
+        neighbours = zeros(Ncells, Ncells)
+        CoM::Float64 = 0.0
+
+        #importantParameters!(pos, Ncells, σ, age, lifetime, unit_vecs, hull, neighbours, CoM, vertex_points)
+
+        interCellForces!(pos,F,Ncells,ϵ,σ,DD,a, age, lifetime, m, vertex_points, CoM, unit_vecs)
+
+        bMForces!(pos,FBM,N_BM_cells,ϵ,σ,r,a,t, lifetime)
 
         # Adapt timestep to maximum force value
         Fmax_sq = max(sum(F.*F,dims=2)...) #Fdims from 2
