@@ -20,6 +20,7 @@ include("./interCellForces.jl")
 include("./initialise.jl")
 include("./createRunDirectory.jl")
 include("./importantParameters.jl")
+include("./BMForces.jl")
 #include("./outerPoints.jl")
 using .InterCellForces
 using .CalculateNoise
@@ -28,6 +29,7 @@ using .OutputData
 using .Initialise
 using .CreateRunDirectory
 using .ImportantParameters
+using .BMForces
 #using .OuterPoints
 
 
@@ -99,7 +101,11 @@ using .ImportantParameters
         hull = sp.ConvexHull(reshape(filter(!iszero, pos), (Ncells,3)))
         vertex_points = hull.vertices.+1
         neighbours = zeros(Ncells, Ncells)
+
+###############################
         CoM::Float64 = 0.0
+        # ^Float 64 is implicit in the use of a decimal point in this definition, so the ::Float64 is unnecessary
+###############################
 
         #importantParameters!(pos, Ncells, σ, age, lifetime, unit_vecs, hull, neighbours, CoM, vertex_points)
 
