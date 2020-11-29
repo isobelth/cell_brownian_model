@@ -11,7 +11,7 @@ using PyPlot
 using LinearAlgebra
 
 function main_test()
-    Ncells=10
+    Ncells=1
     age            = MMatrix{Ncells,1}(zeros(Ncells,1))
     pos            = MMatrix{Ncells,3}(zeros(Ncells,3))
     posBM = MMatrix{Ncells,3}(zeros(Ncells,3))
