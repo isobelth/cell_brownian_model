@@ -2,8 +2,6 @@
 #  createRunDirectory.jl
 #  cell-brownian-model
 #
-#  Created by Christopher Revell on 02/05/2020.
-#
 #
 __precompile__()
 module CreateRunDirectory

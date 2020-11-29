@@ -1,6 +1,7 @@
 using StaticArrays
-@pyimport matplotlib.pyplot as pyplt
+
 using PyCall
+@pyimport matplotlib.pyplot as pyplt
 #using VoronoiDelaunay
 sp = pyimport("scipy.spatial")
 
@@ -13,8 +14,12 @@ function main_test()
     Ncells=10
     age            = MMatrix{Ncells,1}(zeros(Ncells,1))
     pos            = MMatrix{Ncells,3}(zeros(Ncells,3))
+    posBM = MMatrix{Ncells,3}(zeros(Ncells,3))
+
+
     for ii=1:Ncells
         pos[ii,:] .= rand(Uniform(-2,2),3)
+        posBM[ii,:] .= rand(Uniform(-2,2),3)
     end
 
     lifetime::Float64 = 5.0
@@ -23,19 +28,21 @@ function main_test()
     #hull = sp.ConvexHull(reshape(filter(!iszero, pos), (Ncells,3)))
 
 
-    def in_hull(p,hull):
-        if not isinstance(hull,Delaunay):
-            hull = Delaunay(hull)
 
-            return hull.find_simplex(p)>=0
 
-    bm_cells = np.random.rand(10,3)
     hull = sp.Delaunay(reshape(filter(!iszero, pos), (Ncells,3)))
-    result = in_hull(bm_cells, hull)
+    #pybuiltin(:isinstance)
+    if pybuiltin(:isinstance)(hull, sp.Delaunay) == 0
+        hull = sp.Delaunay(hull)
+    end
+    result = hull.find_simplex(reshape(filter(!iszero, posBM), (Ncells,3)))
+
+
+
 
 
     #return neighbours, pos, unit_vecs
-
+    return pos, posBM, result, result.>= 0
 
 end
 

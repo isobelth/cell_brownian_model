@@ -16,7 +16,7 @@ sp = pyimport("scipy.spatial")
                 r .= pos[jj,:] .- pos[ii,:]
                 r_mag = sqrt(dot(r,r))
                 #r .= r.*2.0*ϵ*a*(exp(-a*(r_mag-σ)/σ)-exp(-2.0*a*(r_mag-σ)/σ))/r_mag;
-                equilibrium_sep =σ*(1+ (0.13*(age[jj]+age[ii]))/(2*lifetime))
+                equilibrium_sep =σ*(1+ (0.13*(age[jj].+age[ii]))/(2*lifetime))##################
                 r .= r.*2.0*ϵ*a*(exp(-a*(r_mag-equilibrium_sep))-exp(-2.0*a*(r_mag-equilibrium_sep)))/r_mag;
                 #r .= r.*2.0*ϵ*a*(exp(-a*(r_mag-σ))-exp(-2.0*a*(r_mag-σ)))/r_mag;
                 F[ii,:] .+= r
@@ -29,7 +29,7 @@ sp = pyimport("scipy.spatial")
     for i in vertex_points
         distance = pos[i,:] .- CoM
         distance_mag = sqrt(dot(distance,distance))
-        F[i,:] .+= (unit_vecs[i,:] .* m)
+        F[i,:] .+= (unit_vecs[i,:].* distance_mag .* m)
     end
 
 end
