@@ -56,6 +56,8 @@ sp = pyimport("scipy.spatial")
                 r_mag = sqrt(dot(r,r))
                 if r_mag > 15*σ_BM
                     N_BM_cells = N_BM_cells + 1
+                    #in each timestep, the positions are given and look to be correct
+                    #however, in the next timestep, the positions calculated in the previous timestep are forgotten and replaced with NaN
                     BM_pos[N_BM_cells, :] .= 0.5*(BM_pos[j,:] + BM_pos[i,:])
 
                     print("NEW CELL, i=", i, "j=",j, "mag=", r_mag, "POS OF NEW BM CELL=", BM_pos[N_BM_cells,:], "\n")
