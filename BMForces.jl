@@ -1,5 +1,5 @@
 #
-__precompile__()
+
 module BMForces
 
 using LinearAlgebra

@@ -3,7 +3,7 @@
 #  cell-brownian-model
 #
 #
-__precompile__()
+
 module CreateRunDirectory
 
 using Dates
@@ -12,7 +12,7 @@ function createRunDirectory(Ncells,Ncells_max, lifetime,boxSize,k,μ,kT,ϵ,σ,D,
     date = Dates.format(Dates.now(), "dd-mm-yyyy")
     foldername = "$date,N-$Ncells,Nmax-$Ncells_max,tmax-$tmax,kT-$kT, m-$m"
     #foldername = (Dates.format(Dates.now(),"dd-mm-yyyy"+"N-$Ncells,tmax-$tmax,a-$a,kT-$kT")
-    mkdir("output/$(foldername)")
+    mkpath("output/$(foldername)")
     open("output/$(foldername)/conditions.txt","w") do conditionsfile
         println(conditionsfile,"Ncells,$Ncells")
         println(conditionsfile,"Nmax,$Ncells_max")

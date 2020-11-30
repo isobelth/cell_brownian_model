@@ -3,8 +3,9 @@
 #  cell-brownian-model
 #
 #
-__precompile__()
+
 module UpdateSystem
+
 using Random
 using Distributions
 using LinearAlgebra

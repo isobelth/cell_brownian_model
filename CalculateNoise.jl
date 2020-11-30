@@ -3,7 +3,7 @@
 #  cell-brownian-model
 #
 #
-__precompile__()
+
 module CalculateNoise
 
 using Random

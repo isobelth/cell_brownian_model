@@ -2,31 +2,23 @@
 using Distributions
 using StaticArrays
 using PyCall
+using Revise
 sp = pyimport("scipy.spatial")
 
 # Import program modules
-include("./outputData.jl")
-include("./calculateNoise.jl")
-include("./updateSystem.jl")
-include("./interCellForces.jl")
-include("./initialise.jl")
-include("./createRunDirectory.jl")
-include("./importantParameters.jl")
-include("./bMForces.jl")
-
-using .InterCellForces
-using .CalculateNoise
-using .UpdateSystem
-using .OutputData
-using .Initialise
-using .CreateRunDirectory
-using .ImportantParameters
-using .BMForces
-
+push!(LOAD_PATH,"./")
+using InterCellForces
+using CalculateNoise
+using UpdateSystem
+using OutputData
+using Initialise
+using CreateRunDirectory
+using ImportantParameters
+using BMForces
 
 
 # Define function for bringing together modules to run simulation
-@inline function main()
+function main()
     # Define run parameters
     Ncells        = 8           # Number of cells to start with
     σ              = 0.5         # Minimum diameter of cell/Equilibrium separation

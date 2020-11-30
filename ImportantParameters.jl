@@ -1,13 +1,14 @@
 #  cell-brownian-model
 #
 
-__precompile__()
+
 module ImportantParameters
 
 using LinearAlgebra
 using StaticArrays
 using PyCall
 sp = pyimport("scipy.spatial")
+
 @inline function importantParameters!(pos,BM_pos, Ncells,N_BM_cells, age,t, lifetime, unit_vecs, hull, neighbours, CoM, vertex_points, unit_vecs_BM, hull_BM, neighbours_BM, CoM_total, vertex_points_BM)
 ###################FIND THE CENTRE OF MASS################
     numerator = 0
