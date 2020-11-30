@@ -11,19 +11,19 @@ sp = pyimport("scipy.spatial")
 
 @inline function importantParameters!(pos,BM_pos, Ncells,N_BM_cells, age,t, lifetime, unit_vecs, hull, neighbours, CoM, vertex_points, unit_vecs_BM, hull_BM, neighbours_BM, CoM_total, vertex_points_BM)
 ###################FIND THE CENTRE OF MASS################
-    numerator = 0
+    numerator = zeros(Float64,3)
     denominator::Float64 = 0
     factor::Float64 = 0
     factor_BM::Float64 = 0
-    numerator_total = 0
+    numerator_total = zeros(Float64,3)
     denominator_total = 0
 
 #TO FIND COM JUST OF THE CELLS
     for i in 1:Ncells
         factor = (1+ 0.26*(age[i]/lifetime))^3
-        numerator += pos[i,:] .* factor
+        numerator .+= pos[i,:] .* factor
         denominator += factor
-        numerator_total += pos[i,:] .*factor
+        numerator_total .+= pos[i,:] .*factor
         denominator_total += factor
     end
 #TO FIND COM OF THE ENTIRE CLUSTER
@@ -158,14 +158,14 @@ sp = pyimport("scipy.spatial")
 ############FIND AN APPROXIMATE INWARD DIRECTION##########
     #unit_vecs=zeros(Ncells, 3)
     for i in vertex_points
-        unit_vector = 0
+        unit_vector = zeros(Float64,3)
         for j in neighbours[i,:]
             if j != 0.0
                 j=convert(Int64, j)
                 vector2 = pos[j,:] .- pos[i,:]
                 mag_2 = sqrt(dot(vector2, vector2))
                 unit_vector2 = vector2/mag_2
-                unit_vector += unit_vector2 ###########
+                unit_vector .+= unit_vector2 ###########
             end
         end
         if sqrt(dot(unit_vector, unit_vector)) != 0
