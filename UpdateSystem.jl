@@ -22,6 +22,8 @@ sp = pyimport("scipy.spatial")
     F .= 0
     W .= 0
 
+    display(FBM)
+    display(WBM)
     BM_pos .+= FBM.*(dt*D/kT) .+ WBM.*sqrt(2.0*D)
     FBM .= 0
     WBM .= 0
@@ -56,14 +58,14 @@ sp = pyimport("scipy.spatial")
                 r .= BM_pos[j,:] .- BM_pos[i,:]
                 r_mag = sqrt(dot(r,r))
                 if r_mag > 15*σ_BM
-                    N_BM_cells = N_BM_cells + 1
+                    N_BM_cells += 1
                     #in each timestep, the positions are given and look to be correct
                     #however, in the next timestep, the positions calculated in the previous timestep are forgotten and replaced with NaN
                     BM_pos[N_BM_cells, :] .= 0.5*(BM_pos[j,:] + BM_pos[i,:])
 
-                    print("NEW CELL, i=", i, "j=",j, "mag=", r_mag, "POS OF NEW BM CELL=", BM_pos[N_BM_cells,:], "\n")
+
                 else
-                    print("NO i=", i, "j=",j,"mag=", r_mag, "\n")
+                    # skip
                 end
             end
         end

@@ -63,7 +63,7 @@ function main()
     AA = zeros(3)
     BB = zeros(3)
     CC  = zeros(4)
-    DD = MArray{Tuple{3},Float64,1,3}(zeros(3))
+    DD = MVector{3}(zeros(3))
 
     # Set up folder and output files for data
     foldername = createRunDirectory(Ncells,Ncells_max, lifetime,boxSize, k,μ,kT,ϵ,σ,D,tmax,dt,outputInterval, m)
@@ -93,18 +93,20 @@ function main()
 
         #calculate the convex hull and the vertex points
         hull = sp.ConvexHull(reshape(filter(!iszero, pos), (Ncells,3)))
-        vertex_points = hull.vertices.+1
+        vertex_points = hull.vertices .+ 1
 
-        print("BM pos = ", BM_pos, "\n")
         hull_BM = sp.ConvexHull(reshape(filter(!iszero, BM_pos), (N_BM_cells,3)))
         vertex_points_BM = hull_BM.vertices.+1
 
         #function calculates the neighbours list and CoM
         importantParameters!(pos, BM_pos, Ncells, N_BM_cells, age, t, lifetime, unit_vecs, hull, neighbours, CoM, vertex_points, unit_vecs_BM, hull_BM, neighbours_BM, CoM_total, vertex_points_BM)
+
         #calculates forces between cells
         interCellForces!(pos,F,Ncells,ϵ,σ,DD,a, age, lifetime, m, vertex_points, CoM, unit_vecs)
+
         #calculates forces between BM cells
         bMForces!(pos,BM_pos,FBM,Ncells, N_BM_cells,ϵ,σ,σ_BM, DD,a,t, lifetime, vertex_points_BM, CoM_total, unit_vecs_BM)
+
 
         # Adapt timestep to maximum force value
         Fmax_sq = max(sum(F.*F,dims=2)...) #Fdims from 2
@@ -115,8 +117,6 @@ function main()
 
         # Forward euler integration of system
         t, Ncells, N_BM_cells = updateSystem!(DD, pos,F,W,Ncells, BM_pos, FBM, WBM, N_BM_cells, t,dt,D,kT,age,lifetime,σ,σ_BM, hull, vertex_points, hull_BM, vertex_points_BM, neighbours_BM)
-        print("t=",t,"Ncells=",Ncells,"NBMcells=",N_BM_cells,"\n")
-        #print("NeighboursBM=",neighbours_BM,"\n")
 
     end
     close(outfile)

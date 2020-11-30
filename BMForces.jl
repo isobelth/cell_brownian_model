@@ -8,22 +8,32 @@ using PyCall
 sp = pyimport("scipy.spatial")
 
 @inline function bMForces!(pos,BM_pos, FBM,Ncells, N_BM_cells,ϵ,σ,σ_BM, r,a,t,lifetime, vertex_points_BM, CoM_total, unit_vecs_BM)
+
 #############MORSE FORCE BETWEEN BMCELLS##########
     for ii=1:N_BM_cells
         for jj=1:N_BM_cells
+            println("$ii $jj")
             if ii==jj
                 #skip
             else
                 r .= BM_pos[jj,:] .- BM_pos[ii,:]
+
+#### This value of r is sometimes (0,0,0)
+                display(r)
                 r_mag = sqrt(dot(r,r))
-                equilibrium_sep =(σ_BM)
+                equilibrium_sep = σ_BM
                 r .= r.*2.0*ϵ*a*(exp(-a*(r_mag-equilibrium_sep))-exp(-2.0*a*(r_mag-equilibrium_sep)))/r_mag;
+#### When r_mag = 0, the force is undefined
+                println("updated r")
+                display(r)
+####                
                 #r .= r.*2.0*ϵ*a*(exp(-a*(r_mag-σ))-exp(-2.0*a*(r_mag-σ)))/r_mag;
                 FBM[ii,:] .+= r
                 FBM[jj,:] .-= r
             end
         end
     end
+
 #########IF THE BM CELL IS INSIDE THE CONVEX HULL, WE ADD LOADS OF FORCE IN THE OUTWARD DIRECTION
 
     # hull = sp.Delaunay(reshape(filter(!iszero, pos), (Ncells,3)))
