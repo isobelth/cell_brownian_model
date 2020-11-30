@@ -51,22 +51,26 @@ sp = pyimport("scipy.spatial")
         end
     end
 
+    tested = Tuple{Int64,Int64}[]
     for i in vertex_points_BM
         for j in neighbours_BM[i,:]
             if j != 0.0
                 j=convert(Int64, j)
-                r .= BM_pos[j,:] .- BM_pos[i,:]
-                r_mag = sqrt(dot(r,r))
-                if r_mag > 15*σ_BM
-                    N_BM_cells += 1
-                    #in each timestep, the positions are given and look to be correct
-                    #however, in the next timestep, the positions calculated in the previous timestep are forgotten and replaced with NaN
-                    BM_pos[N_BM_cells, :] .= 0.5*(BM_pos[j,:] + BM_pos[i,:])
-
-
+                if (i,j) in tested || (j,i) in tested
+                    #skip
                 else
+                    push!(tested,(i,j))
+                    r .= BM_pos[j,:] .- BM_pos[i,:]
+                    r_mag = sqrt(dot(r,r))
+                    if r_mag > 15*σ_BM
+                        N_BM_cells += 1
+                        #in each timestep, the positions are given and look to be correct
+                        #however, in the next timestep, the positions calculated in the previous timestep are forgotten and replaced with NaN
+                        BM_pos[N_BM_cells, :] .= 0.5*(BM_pos[j,:] + BM_pos[i,:])
+                    else
                     # skip
-                end
+                    end
+                end 
             end
         end
     end
