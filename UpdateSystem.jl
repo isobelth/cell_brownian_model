@@ -51,12 +51,12 @@ sp = pyimport("scipy.spatial")
         end
     end
 
-    tested = Tuple{Int64,Int64}[]
+    tested = Tuple{Int64,Int64}[] #these are all the ones we've checked already
     for i in vertex_points_BM
         for j in neighbours_BM[i,:]
             if j != 0.0
                 j=convert(Int64, j)
-                if (i,j) in tested || (j,i) in tested
+                if (i,j) in tested || (j,i) in tested #|| means or
                     #skip
                 else
                     push!(tested,(i,j))
@@ -70,7 +70,7 @@ sp = pyimport("scipy.spatial")
                     else
                     # skip
                     end
-                end 
+                end
             end
         end
     end

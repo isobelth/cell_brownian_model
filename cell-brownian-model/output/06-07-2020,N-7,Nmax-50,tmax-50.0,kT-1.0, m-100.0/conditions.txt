@@ -1,0 +1,14 @@
+Ncells         7      
+Nmax              50    
+Box size       3.0      
+k               10.0      
+μ              1.0              
+kT             1.0             
+ϵ              10.0            
+σ              0.5              
+D              0.1061032953945969              
+tmax           50.0           
+dt             0.0001             
+outputInterval 0.5 
+lifetime       8.0 
+m              100.0 

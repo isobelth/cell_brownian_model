@@ -2,11 +2,11 @@
 using Distributions
 using StaticArrays
 using PyCall
-using Revise
+using Revise #if you edite a module, the edit will be reflected in the current julia instance, this works because you've got the load path function
 sp = pyimport("scipy.spatial")
 
 # Import program modules
-push!(LOAD_PATH,"./")
+push!(LOAD_PATH,"./") #where the interpreter looks for existing modules, as long as module name matches filename it will be able to find it
 using InterCellForces
 using CalculateNoise
 using UpdateSystem
